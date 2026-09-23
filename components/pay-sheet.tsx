@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { AlertTriangle } from "lucide-react"
 import { useStore } from "@/lib/store"
 import { BottomSheet } from "@/components/ui/sheet"
@@ -24,6 +24,12 @@ export function PaySheet({ mode, onClose, payment }: { mode: PayMode; onClose: (
   const [merchant, setMerchant] = useState(payment?.merchant ?? "")
   const [amount, setAmount] = useState(payment?.amount ? String(payment.amount) : "")
   const [category, setCategory] = useState<Category>(preset?.category ?? "Others")
+
+  useEffect(() => {
+    setMerchant(payment?.merchant ?? "")
+    setAmount(payment?.amount ? String(payment.amount) : "")
+    setCategory(preset?.category ?? "Others")
+  }, [payment, preset?.category])
 
   const status = dailyLimitStatus(state)
   const numeric = Number(amount) || 0

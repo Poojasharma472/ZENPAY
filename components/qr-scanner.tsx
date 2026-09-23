@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import QrScanner from "qr-scanner"
-import { Camera, X, Zap, ZapOff } from "lucide-react"
+import { Camera, ImageIcon, X, Zap, ZapOff } from "lucide-react"
 
 export type ScannedPayment = { merchant: string; vpa: string; amount?: number }
 
@@ -26,6 +26,7 @@ export function QrScannerSheet({ onClose, onScanned }: { onClose: () => void; on
   const scannerRef = useRef<QrScanner | null>(null)
   const [error, setError] = useState("")
   const [torch, setTorch] = useState(false)
+  const [scanningImage, setScanningImage] = useState(false)
 
   useEffect(() => {
     const video = videoRef.current
@@ -52,6 +53,25 @@ export function QrScannerSheet({ onClose, onScanned }: { onClose: () => void; on
     setTorch(next)
   }
 
+  async function scanImage(file: File) {
+    setScanningImage(true)
+    setError("")
+    try {
+      const result = await QrScanner.scanImage(file, { returnDetailedScanResult: true })
+      const payment = parsePayment(result.data)
+      if (!payment) {
+        setError("This is not a valid UPI payment QR")
+        return
+      }
+      scannerRef.current?.stop()
+      onScanned(payment)
+    } catch {
+      setError("Could not find a QR code in that image")
+    } finally {
+      setScanningImage(false)
+    }
+  }
+
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 p-0 sm:items-center sm:p-4">
       <section className="w-full max-w-md overflow-hidden rounded-t-3xl bg-card shadow-2xl sm:rounded-3xl" aria-label="Scan UPI QR code">
@@ -62,10 +82,25 @@ export function QrScannerSheet({ onClose, onScanned }: { onClose: () => void; on
         <div className="relative aspect-square bg-black">
           <video ref={videoRef} className="size-full object-cover" muted playsInline aria-label="Camera preview" />
           <div className="pointer-events-none absolute inset-12 rounded-3xl border-2 border-white/90 shadow-[0_0_0_999px_rgba(0,0,0,.3)]" />
-          <div className="absolute bottom-4 left-0 right-0 flex justify-center">
+          <div className="absolute bottom-4 left-0 right-0 flex items-center justify-center gap-2">
             <button onClick={toggleTorch} className="flex items-center gap-2 rounded-full bg-black/60 px-4 py-2 text-sm text-white" aria-label={torch ? "Turn flash off" : "Turn flash on"}>
               {torch ? <ZapOff className="size-4" /> : <Zap className="size-4" />} {torch ? "Flash off" : "Flash"}
             </button>
+            <label className="flex cursor-pointer items-center gap-2 rounded-full bg-black/60 px-4 py-2 text-sm text-white">
+              <ImageIcon className="size-4" />
+              {scanningImage ? "Scanning..." : "Upload QR"}
+              <input
+                type="file"
+                accept="image/*"
+                className="sr-only"
+                disabled={scanningImage}
+                onChange={(event) => {
+                  const file = event.target.files?.[0]
+                  if (file) void scanImage(file)
+                  event.currentTarget.value = ""
+                }}
+              />
+            </label>
           </div>
         </div>
         <div className="px-5 py-4 text-center text-sm text-muted-foreground">
