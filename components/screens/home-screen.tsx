@@ -25,10 +25,13 @@ import {
 import { inr, shortDate } from "@/lib/format"
 import type { Tab } from "@/components/app-shell"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { QrScannerSheet, type ScannedPayment } from "@/components/qr-scanner"
 
 export function HomeScreen({ onNavigate }: { onNavigate: (tab: Tab) => void }) {
   const { state, payBill } = useStore()
   const [payMode, setPayMode] = useState<PayMode>(null)
+  const [scannerOpen, setScannerOpen] = useState(false)
+  const [scannedPayment, setScannedPayment] = useState<ScannedPayment | undefined>()
 
   const { profile, transactions, bills, goalSaved } = state
   const spent = spentThisMonth(transactions)
@@ -47,7 +50,7 @@ export function HomeScreen({ onNavigate }: { onNavigate: (tab: Tab) => void }) {
 
   const quickActions = [
     { label: "Send Money", icon: Send, onClick: () => setPayMode("send") },
-    { label: "Scan & Pay", icon: ScanLine, onClick: () => setPayMode("scan") },
+    { label: "Scan & Pay", icon: ScanLine, onClick: () => setScannerOpen(true) },
     { label: "Recharge", icon: Smartphone, onClick: () => setPayMode("recharge") },
     { label: "Bills", icon: Receipt, onClick: () => onNavigate("bills") },
     { label: "Add to Goal", icon: PiggyBank, onClick: () => onNavigate("goal") },
@@ -261,7 +264,21 @@ export function HomeScreen({ onNavigate }: { onNavigate: (tab: Tab) => void }) {
         </Card>
       </div>
 
-      <PaySheet mode={payMode} onClose={() => setPayMode(null)} />
+      <PaySheet
+        mode={payMode}
+        payment={scannedPayment}
+        onClose={() => { setPayMode(null); setScannedPayment(undefined) }}
+      />
+      {scannerOpen && (
+        <QrScannerSheet
+          onClose={() => setScannerOpen(false)}
+          onScanned={(payment) => {
+            setScannerOpen(false)
+            setScannedPayment(payment)
+            setPayMode("scan")
+          }}
+        />
+      )}
     </div>
   )
 }

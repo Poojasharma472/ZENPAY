@@ -1,4 +1,4 @@
-import { generateText } from "ai"
+import { streamText } from "ai"
 
 const systemPrompt = `You are the Zenpay Assistant, a helpful AI guide for the Zenpay money management app. 
 You help users with:
@@ -23,8 +23,7 @@ export async function POST(request: Request) {
       messages,
     })
 
-    const stream = result.toDataStream()
-    return new Response(stream)
+    return result.toTextStreamResponse()
   } catch (error) {
     console.error("[v0] Chat API error:", error)
     return new Response("Error processing your message", { status: 500 })

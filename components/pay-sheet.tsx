@@ -18,11 +18,11 @@ const MODE_LABELS: Record<Exclude<PayMode, null>, { title: string; merchant: str
   recharge: { title: "Mobile Recharge", merchant: "Prepaid Recharge", category: "Bills" },
 }
 
-export function PaySheet({ mode, onClose }: { mode: PayMode; onClose: () => void }) {
+export function PaySheet({ mode, onClose, payment }: { mode: PayMode; onClose: () => void; payment?: { merchant: string; vpa: string; amount?: number } }) {
   const { state, addTransaction } = useStore()
   const preset = mode ? MODE_LABELS[mode] : null
-  const [merchant, setMerchant] = useState("")
-  const [amount, setAmount] = useState("")
+  const [merchant, setMerchant] = useState(payment?.merchant ?? "")
+  const [amount, setAmount] = useState(payment?.amount ? String(payment.amount) : "")
   const [category, setCategory] = useState<Category>(preset?.category ?? "Others")
 
   const status = dailyLimitStatus(state)
@@ -44,7 +44,7 @@ export function PaySheet({ mode, onClose }: { mode: PayMode; onClose: () => void
       amount: numeric,
       direction: "out",
       status: "Success",
-      vpa: mode === "recharge" ? "recharge@zenpay" : "upi@zenpay",
+      vpa: payment?.vpa ?? (mode === "recharge" ? "recharge@zenpay" : "upi@zenpay"),
     })
     reset()
     onClose()
