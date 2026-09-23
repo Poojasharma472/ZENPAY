@@ -103,7 +103,6 @@ npm run dev
 | :--- | :--- |
 | Pooja Santosh Sharma | https://linkedin.com |
 | Shreya Nitin Sankpal |https://www.linkedin.com/in/shreya-s-ba8113411/ |
-|
-| Samarth Manish Shelar | |
+| Samarth Manish Shelar |https://www.linkedin.com/in/samarth-shelar-180718439/  |
 
 ***Built for the Musa Codex Hackathon ❤️ — FinTech & Digital Payments.***
