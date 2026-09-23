@@ -59,7 +59,8 @@ export function HomeScreen({ onNavigate }: { onNavigate: (tab: Tab) => void }) {
   return (
     <div className="flex flex-col gap-4 pb-4">
       {/* Header */}
-      <div className="bg-brand-gradient px-5 pb-8 pt-10 text-primary-foreground">
+      <div className="bg-brand-gradient px-5 pb-8 pt-10 text-primary-foreground lg:rounded-b-[2rem] lg:px-10 lg:pb-10 lg:pt-8">
+        <div className="mx-auto max-w-[1360px]">
         <div className="flex items-start justify-between">
           <div>
             <p className="text-sm/none opacity-80">Hi {profile.name} 👋</p>
@@ -98,18 +99,19 @@ export function HomeScreen({ onNavigate }: { onNavigate: (tab: Tab) => void }) {
             ? "Salary credits today"
             : `Next salary in ${days} day${days === 1 ? "" : "s"} (day ${profile.salaryDay} of the month)`}
         </p>
+        </div>
       </div>
 
-      <div className="-mt-6 flex flex-col gap-4 px-4">
+      <div className="mx-auto grid w-full max-w-[1360px] grid-cols-1 gap-4 px-4 lg:-mt-8 lg:grid-cols-12 lg:px-10">
         {/* Daily limit card */}
         <Card
-          className={
+          className={`lg:col-span-7 ${
             daily.over
               ? "border-warning/50 bg-warning/5"
               : daily.near
                 ? "border-warning/30"
-                : ""
-          }
+                : ""}
+          `}
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -146,7 +148,7 @@ export function HomeScreen({ onNavigate }: { onNavigate: (tab: Tab) => void }) {
         </Card>
 
         {/* Dream goal */}
-        <Card>
+        <Card className="lg:col-span-5">
           <div className="flex items-start justify-between">
             <div>
               <p className="text-sm text-muted-foreground">Dream goal</p>
@@ -163,7 +165,7 @@ export function HomeScreen({ onNavigate }: { onNavigate: (tab: Tab) => void }) {
         </Card>
 
         {/* Quick actions */}
-        <div className="grid grid-cols-5 gap-1">
+        <div className="grid grid-cols-5 gap-1 lg:col-span-12 lg:grid-cols-5 lg:rounded-2xl lg:border lg:border-border lg:bg-card lg:p-3">
           {quickActions.map((a) => (
             <button
               key={a.label}
@@ -181,7 +183,7 @@ export function HomeScreen({ onNavigate }: { onNavigate: (tab: Tab) => void }) {
         </div>
 
         {/* Spending by category */}
-        <Card>
+        <Card className="lg:col-span-6">
           <p className="mb-3 font-semibold text-foreground">Spending by category</p>
           <div className="flex items-center gap-5">
             <Donut segments={segments} />
@@ -203,7 +205,7 @@ export function HomeScreen({ onNavigate }: { onNavigate: (tab: Tab) => void }) {
         </Card>
 
         {/* Upcoming bills */}
-        <Card>
+        <Card className="lg:col-span-6">
           <p className="mb-3 flex items-center gap-2 font-semibold text-foreground">
             <Bell className="size-4 text-primary" /> Upcoming bills
           </p>
@@ -229,7 +231,7 @@ export function HomeScreen({ onNavigate }: { onNavigate: (tab: Tab) => void }) {
         </Card>
 
         {/* Recent transactions */}
-        <Card>
+        <Card className="lg:col-span-12">
           <p className="mb-3 font-semibold text-foreground">Recent transactions</p>
           <ul className="divide-y divide-border">
             {transactions.slice(0, 6).map((t) => (

@@ -34,8 +34,23 @@ export function AppShell() {
   const protectAlerts = fraudCount + (daily.over ? 1 : 0)
 
   return (
-    <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col bg-background">
-      <main className="flex-1 pb-24">
+    <div className="min-h-dvh w-full bg-background lg:flex">
+      <aside className="hidden w-64 shrink-0 flex-col border-r border-border bg-card/80 px-4 py-6 lg:flex">
+        <div className="mb-10 flex items-center gap-3 px-3">
+          <div className="flex size-10 items-center justify-center rounded-2xl bg-brand-gradient text-lg font-bold text-primary-foreground">Z</div>
+          <div><p className="font-bold tracking-tight text-foreground">ZENPAY</p><p className="text-xs text-muted-foreground">Personal finance</p></div>
+        </div>
+        <nav aria-label="Primary navigation" className="flex flex-1 flex-col gap-1">
+          {NAV.map(({ tab: t, label, icon: Icon }) => {
+            const active = tab === t
+            return <button key={t} onClick={() => setTab(t)} className={`flex items-center gap-3 rounded-xl px-3 py-3 text-left text-sm font-medium transition ${active ? "bg-accent text-primary" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`} aria-current={active ? "page" : undefined}><Icon className="size-5" strokeWidth={active ? 2.4 : 2} /><span>{label}</span>{t === "protect" && protectAlerts > 0 && <span className="ml-auto rounded-full bg-destructive px-2 py-0.5 text-[10px] font-bold text-white">{protectAlerts}</span>}</button>
+          })}
+        </nav>
+        <div className="rounded-2xl bg-accent p-4 text-sm"><p className="font-semibold text-foreground">Your money, your peace.</p><p className="mt-1 text-xs leading-relaxed text-muted-foreground">Stay on top of every rupee with Zenpay.</p></div>
+      </aside>
+
+      <div className="min-w-0 flex-1">
+      <main className="mx-auto min-h-dvh w-full max-w-[1440px] pb-24 lg:pb-10">
         {tab === "home" && <HomeScreen onNavigate={setTab} />}
         {tab === "budget" && <BudgetScreen />}
         {tab === "bills" && <BillsScreen />}
@@ -44,8 +59,8 @@ export function AppShell() {
         {tab === "profile" && <ProfileScreen />}
       </main>
 
-      <nav className="fixed inset-x-0 bottom-0 z-30 mx-auto max-w-md border-t border-border bg-card/95 backdrop-blur">
-        <ul className="flex items-stretch justify-between px-1.5 py-2">
+      <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-card/95 backdrop-blur lg:hidden">
+        <ul className="mx-auto flex max-w-md items-stretch justify-between px-1.5 py-2">
           {NAV.map(({ tab: t, label, icon: Icon }) => {
             const active = tab === t
             return (
@@ -72,7 +87,8 @@ export function AppShell() {
           })}
         </ul>
   </nav>
-  <ZenpayChatbot />
-  </div>
+      <ZenpayChatbot />
+      </div>
+    </div>
   )
 }
